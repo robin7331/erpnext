@@ -731,7 +731,7 @@ class BOM(WebsiteGenerator):
 		items = []
 		for m in self.get("items"):
 			if m.bom_no:
-				validate_bom_no(m.item_code, m.bom_no)
+				validate_bom_no(m.item_code, m.bom_no, allow_draft=(self.docstatus == 0))
 			if flt(m.qty) <= 0:
 				frappe.throw(_("Quantity required for Item {0} in row {1}").format(m.item_code, m.idx))
 			check_list.append(m)
@@ -1463,12 +1463,12 @@ def get_bom_items(bom, company, qty=1, fetch_exploded=1):
 	return items
 
 
-def validate_bom_no(item, bom_no):
+def validate_bom_no(item, bom_no, allow_draft=False):
 	"""Validate BOM No of sub-contracted items"""
 	bom = frappe.get_doc("BOM", bom_no)
 	if not bom.is_active:
 		frappe.throw(_("BOM {0} must be active").format(bom_no))
-	if bom.docstatus != 1:
+	if not allow_draft and bom.docstatus != 1:
 		if not frappe.in_test:
 			frappe.throw(_("BOM {0} must be submitted").format(bom_no))
 	if item:
