@@ -87,7 +87,7 @@ frappe.ui.form.on("BOM", {
 				filters: {
 					item: d.item_code,
 					is_active: 1,
-					docstatus: 1,
+					docstatus: ["!=", 2],
 				},
 			};
 		});

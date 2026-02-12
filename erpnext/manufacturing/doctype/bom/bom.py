@@ -561,7 +561,9 @@ class BOM(WebsiteGenerator):
 					rate = get_bom_item_rate(arg, self)
 
 					if not rate:
-						if self.rm_cost_as_per == "Price List":
+						if arg.get("bom_no"):
+							rate = flt(self.get_bom_unitcost(arg["bom_no"])) * (arg.get("conversion_factor") or 1)
+						elif self.rm_cost_as_per == "Price List":
 							frappe.msgprint(
 								_("Price not found for item {0} in price list {1}").format(
 									arg["item_code"], self.buying_price_list
